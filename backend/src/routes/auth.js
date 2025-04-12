@@ -14,13 +14,29 @@ router.post('/register', async (req, res) => {
 
 // Prihlásenie
 router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
-  const user = await User.findOne({ where: { email } });
-  if (!user) return res.status(404).json({ error: 'User not found' });
-  const isValid = await bcrypt.compare(password, user.password);
-  if (!isValid) return res.status(401).json({ error: 'Invalid password' });
-  const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
-  res.json({ token });
+  try {
+    const { email, password } = req.body;
+    
+    // 1. Nájdite používateľa
+    const user = await User.findOne({ where: { email } });
+    if (!user) return res.status(401).json({ error: 'Neplatné prihlasovacie údaje' });
+
+    // 2. Overte heslo
+    const isValid = await bcrypt.compare(password, user.password);
+    if (!isValid) return res.status(401).json({ error: 'Neplatné prihlasovacie údaje' });
+
+    // 3. Vytvorte JWT token
+    const token = jwt.sign(
+      { id: user.id }, 
+      process.env.JWT_SECRET, // Použije váš kľúč z .env
+      { expiresIn: '1h' }
+    );
+
+    // 4. Vráťte token
+    res.json({ token });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 module.exports = router;
