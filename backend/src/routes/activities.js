@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Activity = require('../models/Activity');
+const { Activity } = require('../models');
 const authenticateToken = require('../middleware/auth');
 
 // GET všetky aktivity
@@ -34,9 +34,24 @@ router.put('/:id', async (req, res) => {
 });
 
 // DELETE aktivita
-router.delete('/:id', async (req, res) => {
-  await Activity.destroy({ where: { id: req.params.id } });
-  res.json({ message: 'Activity deleted' });
+router.delete('/:id', authenticateToken, async (req, res) => {
+  try {
+    const activity = await Activity.findOne({
+      where: {
+        id: req.params.id,
+        user_id: req.user.id // Kontrola, či aktivita patrí používateľovi
+      }
+    });
+
+    if (!activity) {
+      return res.status(404).json({ error: 'Aktivita neexistuje alebo nemáte oprávnenie' });
+    }
+
+    await activity.destroy();
+    res.status(204).end(); // 204 No Content
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // GET /api/activities/my - Vráti aktivity prihláseného používateľa

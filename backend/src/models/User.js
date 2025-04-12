@@ -1,4 +1,4 @@
-module.exports = (sequelize, DataTypes) => {
+/*module.exports = (sequelize, DataTypes) => {
     return sequelize.define('User', {
       email: { type: DataTypes.STRING, unique: true },
       password: DataTypes.STRING,
@@ -30,4 +30,32 @@ const User = sequelize.define('User', {
   updatedAt: false
 });
 
-module.exports = User;
+module.exports = User;*/
+
+
+
+
+const { DataTypes } = require('sequelize');
+
+module.exports = (sequelize) => {
+  return sequelize.define('User', {
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    role: {
+      type: DataTypes.STRING,
+      allowNull: false
+    }
+  }, {
+    tableName: 'users',
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: false
+  });
+};

@@ -6,7 +6,7 @@
     });
   };*/
 
-  const { DataTypes } = require('sequelize');
+/*const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
 const Activity = sequelize.define('Activity', {
@@ -27,4 +27,29 @@ const Activity = sequelize.define('Activity', {
   updatedAt: false
 });
 
-module.exports = Activity;
+module.exports = Activity;*/
+
+
+
+
+const { DataTypes } = require('sequelize');
+
+module.exports = (sequelize) => {
+  return sequelize.define('Activity', {
+    type: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    distance: {
+      type: DataTypes.FLOAT
+    },
+    duration: {
+      type: DataTypes.INTEGER
+    }
+  }, {
+    tableName: 'activities',
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: false
+  });
+};

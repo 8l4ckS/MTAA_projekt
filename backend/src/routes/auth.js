@@ -2,7 +2,7 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
-const User = require('../models/User');
+const { User } = require('../models');
 
 // Registrácia
 router.post('/register', async (req, res) => {
